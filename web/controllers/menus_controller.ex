@@ -2,7 +2,7 @@ defmodule Menus.MenusController do
   use Menus.Web, :controller
 
   def index(conn, params) do
-    response = case params["command"] do
+    response = case params["text"] do
       "choose " <> menu -> choose(menu)
       "add " <> subcommand -> add(subcommand)
       "remove " <> subcommand -> remove(subcommand)
