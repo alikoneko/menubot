@@ -13,6 +13,10 @@ defmodule Menus.Registry do
     GenServer.call(pid, {:remove, menu, meal})
   end
 
+  def list(pid, menu) do
+    GenServer.call(pid, {:list, menu})
+  end
+
   def choose(pid, menu) do
     GenServer.call(pid, {:choose, menu})
   end
@@ -79,6 +83,10 @@ defmodule Menus.Registry do
 
   defp choose(meals) do
     {:meal, Enum.random(meals)}
+  end
+
+  def handle_call({:list, menu}, _from, menus) do
+    {:reply, {:ok, fetch_meals(menus, menu)}, menus}
   end
 
   defp fetch_meals(menus, menu) do

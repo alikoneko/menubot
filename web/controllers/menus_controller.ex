@@ -4,6 +4,7 @@ defmodule Menus.MenusController do
   def index(conn, params) do
     response = case params["text"] do
       "choose " <> menu -> choose(menu)
+      "list " <> menu -> list(menu)
       "add " <> subcommand -> add(subcommand)
       "remove " <> subcommand -> remove(subcommand)
       _ -> valid_commands
@@ -16,6 +17,17 @@ defmodule Menus.MenusController do
     case Menus.Registry.choose(Menus.Registry, menu) do
       {:ok, meal} -> %{"response_type" => "in_channel", "text" => "Why don't you have #{meal}?"}
       {:error, message} -> %{"response_type" => "in_channel", "text" => message}
+    end
+  end
+
+  def list(menu) do
+    case Menus.Registry.list(Menus.Registry, menu) do
+      {:ok, []}    -> %{"response_type" => "in_channel", "text" => "#{menu} is empty"}
+      {:ok, meals} ->
+        text = meals
+        |> Enum.sort
+        |> Enum.join(", ")
+        %{"response_type" => "in_channel", "text" => "#{menu} contains #{text}"}
     end
   end
 
@@ -33,7 +45,7 @@ defmodule Menus.MenusController do
 
   def valid_commands do
     %{"response_type" => "in_channel", "text" =>
-      "Valid commands are `/menu choose [menu]`, `/menu add [menu] [option]`, and `/menu remove [menu] [option]`"
+      "Valid commands are `/menu choose [menu]`, `/menu list [menu]`, `/menu add [menu] [option]`, and `/menu remove [menu] [option]`"
     }
   end
 
