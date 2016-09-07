@@ -14,14 +14,14 @@ defmodule Menus.MenusController do
   end
 
   def choose(menu) do
-    case Menus.Registry.choose(Menus.Registry, menu) do
+    case Menus.Registry.choose(menu) do
       {:ok, meal} -> %{"response_type" => "in_channel", "text" => "Why don't you have #{meal}?"}
       {:error, message} -> %{"response_type" => "in_channel", "text" => message}
     end
   end
 
   def list(menu) do
-    case Menus.Registry.list(Menus.Registry, menu) do
+    case Menus.Registry.list(menu) do
       {:ok, []}    -> %{"response_type" => "in_channel", "text" => "#{menu} is empty"}
       {:ok, meals} ->
         text = meals
@@ -33,13 +33,13 @@ defmodule Menus.MenusController do
 
   def add(subcommand) do
     [menu, meal] = split_subcommand(subcommand)
-    {:ok, message} = Menus.Registry.add(Menus.Registry, menu, meal)
+    {:ok, message} = Menus.Registry.add(menu, meal)
     %{"response_type" => "in_channel", "text" => message}
   end
 
   def remove(subcommand) do
     [menu, meal] = split_subcommand(subcommand)
-    {:ok, message} = Menus.Registry.remove(Menus.Registry, menu, meal)
+    {:ok, message} = Menus.Registry.remove(menu, meal)
     %{"response_type" => "in_channel", "text" => message}
   end
 

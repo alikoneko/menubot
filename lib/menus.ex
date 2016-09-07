@@ -8,7 +8,7 @@ defmodule Menus do
 
     children = [
       supervisor(Menus.Endpoint, []),
-      supervisor(Menus.Registry, [Menus.Registry]),
+      supervisor(Menus.Registry, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

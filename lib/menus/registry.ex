@@ -1,24 +1,24 @@
 defmodule Menus.Registry do
   use GenServer
 
-  def start_link(name) do
-    GenServer.start_link(__MODULE__, :ok, name: name)
+  def start_link do
+    GenServer.start_link(__MODULE__, :ok, name: Menus.Registry)
   end
 
-  def add(pid, menu, meal) do
-    GenServer.call(pid, {:add, menu, meal})
+  def add(menu, meal) do
+    GenServer.call(Menus.Registry, {:add, menu, meal})
   end
 
-  def remove(pid, menu, meal) do
-    GenServer.call(pid, {:remove, menu, meal})
+  def remove(menu, meal) do
+    GenServer.call(Menus.Registry, {:remove, menu, meal})
   end
 
-  def list(pid, menu) do
-    GenServer.call(pid, {:list, menu})
+  def list(menu) do
+    GenServer.call(Menus.Registry, {:list, menu})
   end
 
-  def choose(pid, menu) do
-    GenServer.call(pid, {:choose, menu})
+  def choose(menu) do
+    GenServer.call(Menus.Registry, {:choose, menu})
   end
 
   def init(:ok) do
@@ -71,17 +71,17 @@ defmodule Menus.Registry do
   end
 
   def handle_call({:choose, menu}, _from, menus) do
-    case choose(fetch_meals(menus, menu)) do
+    case make_choice(fetch_meals(menus, menu)) do
       :not_found    -> {:reply, {:error, "#{menu} has no meals - available options are #{availability(menus)}"}, menus}
       {:meal, meal} -> {:reply, {:ok, meal}, menus}
     end
   end
 
-  defp choose([]) do
+  defp make_choice([]) do
     :not_found
   end
 
-  defp choose(meals) do
+  defp make_choice(meals) do
     {:meal, Enum.random(meals)}
   end
 
